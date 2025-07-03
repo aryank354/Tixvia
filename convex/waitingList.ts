@@ -36,10 +36,14 @@ export const getQueuePosition = query({
     v.null(),
     v.object({
       _id: v.id("waitingList"),
+      _creationTime: v.number(),              // ✅ Added missing field
+
       eventId: v.id("events"),
       userId: v.string(),
       status: v.string(),
       position: v.number(),
+      offerExpiresAt: v.optional(v.number()), // ✅ Added missing field
+
     })
   ),
   handler: async (ctx, { eventId, userId }) => {
