@@ -1,58 +1,55 @@
+// in app/api/webhooks/razorpay/route.ts
 import { headers } from "next/headers";
-import { stripe } from "@/lib/stripe";
 import { getConvexClient } from "@/lib/convex";
 import { api } from "@/convex/_generated/api";
-import Stripe from "stripe";
-import { StripeCheckoutMetaData } from "@/app/actions/createStripeCheckoutSession";
+import crypto from "crypto";
+import type { Webhook } from "razorpay/dist/types/webhook";
 
 export async function POST(req: Request) {
-  console.log("Webhook received");
-
   const body = await req.text();
-  const headersList = await headers();
-  const signature = headersList.get("stripe-signature") as string;
+  const headersList = headers();
+  const signature = headersList.get("x-razorpay-signature") as string;
 
-  console.log("Webhook signature:", signature ? "Present" : "Missing");
+  // 1. Validate the webhook signature for security
+  const expectedSignature = crypto
+    .createHmac("sha256", process.env.RAZORPAY_WEBHOOK_SECRET!)
+    .update(body)
+    .digest("hex");
 
-  let event: Stripe.Event;
-
-  try {
-    console.log("Attempting to construct webhook event");
-    event = stripe.webhooks.constructEvent(
-      body,
-      signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
-    );
-    console.log("Webhook event constructed successfully:", event.type);
-  } catch (err) {
-    console.error("Webhook construction failed:", err);
-    return new Response(`Webhook Error: ${(err as Error).message}`, {
-      status: 400,
-    });
+  if (signature !== expectedSignature) {
+    return new Response("Webhook Error: Invalid signature", { status: 400 });
   }
 
   const convex = getConvexClient();
+  const event = JSON.parse(body) as Webhook;
 
-  if (event.type === "checkout.session.completed") {
-    console.log("Processing checkout.session.completed");
-    const session = event.data.object as Stripe.Checkout.Session;
-    const metadata = session.metadata as StripeCheckoutMetaData;
-    console.log("Session metadata:", metadata);
-    console.log("Convex client:", convex);
+  // 2. Handle the 'payment.captured' event
+  if (event.event === 'payment.captured' && event.payload.payment) {
+    const payment = event.payload.payment.entity;
+    const { eventId, userId } = payment.notes;
 
     try {
-      const result = await convex.mutation(api.events.purchaseTicket, {
-        eventId: metadata.eventId,
-        userId: metadata.userId,
-        waitingListId: metadata.waitingListId,
+      // 3. Call your Convex mutation to create the ticket
+      // NOTE: You will need to create a `purchaseTicketWithRazorpay` mutation in Convex
+      // that is similar to your old `purchaseTicket` but adapted for Razorpay's data.
+      // For now, we will log that the webhook was successful.
+      console.log("Webhook successful. Ready to create ticket for user:", userId, "and event:", eventId);
+      
+      // Example of what the call would look like:
+      /*
+      await convex.mutation(api.events.purchaseTicketWithRazorpay, {
+        eventId: eventId,
+        userId: userId,
         paymentInfo: {
-          paymentIntentId: session.payment_intent as string,
-          amount: session.amount_total ?? 0,
+          paymentId: payment.id,
+          orderId: payment.order_id,
+          amount: payment.amount,
         },
       });
-      console.log("Purchase ticket mutation completed:", result);
+      */
+
     } catch (error) {
-      console.error("Error processing webhook:", error);
+      console.error("Error processing Razorpay webhook in Convex:", error);
       return new Response("Error processing webhook", { status: 500 });
     }
   }

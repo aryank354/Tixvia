@@ -1,7 +1,7 @@
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
-import logo from "@/images/logo.png";
+import logo from "@/images/logo.svg";
 import SearchBar from "./SearchBar";
 
 function Header() {
@@ -10,13 +10,10 @@ function Header() {
       <div className="flex flex-col lg:flex-row items-center gap-4 p-4">
         <div className="flex items-center justify-between w-full lg:w-auto">
           <Link href="/" className="font-bold shrink-0">
-            <Image
-              src={logo}
-              alt="logo"
-              width={200}
-              height={300}
-              className="w-24 lg:w-28"
-            />
+          <div className="mr-6 border-black">
+          <h1 className="text-xl text-bold ">EventFlow</h1>
+          </div>
+
           </Link>
 
           <div className="lg:hidden">

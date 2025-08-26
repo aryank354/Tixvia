@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import { ClerkProvider } from "@clerk/nextjs";
 import SyncUserWithConvex from "@/components/SyncUserWithConvex";
 import { Toaster } from "@/components/ui/toaster";
+import Script from "next/script"; // Import the Script component
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -34,14 +35,24 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ConvexClientProvider>
-          <ClerkProvider>
+          <ClerkProvider
+            appearance={{
+              elements: {
+                footer: "hidden",
+              },
+            }}
+          >
             <Header />
             <SyncUserWithConvex />
             {children}
-
             <Toaster />
           </ClerkProvider>
         </ConvexClientProvider>
+        {/* Add the Razorpay script here, just before the closing body tag */}
+        <Script
+          id="razorpay-checkout-js"
+          src="https://checkout.razorpay.com/v1/checkout.js"
+        />
       </body>
     </html>
   );
