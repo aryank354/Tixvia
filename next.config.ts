@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { hostname: "upbeat-stoat-959.convex.cloud", protocol: "https" },
       { hostname: "wary-anaconda-29.convex.cloud", protocol: "https" },
+      { hostname: "groovy-jackal-536.convex.cloud", protocol: "https" },
     ],
   },
 };
