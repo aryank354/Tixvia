@@ -66,7 +66,7 @@ export async function createStripeCheckoutSession({
       line_items: [
         {
           price_data: {
-            currency: "gbp",
+            currency: "inr",
             product_data: {
               name: event.name,
               description: event.description,
