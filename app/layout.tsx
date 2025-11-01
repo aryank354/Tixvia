@@ -37,7 +37,22 @@ export default function RootLayout({
           <ClerkProvider>
             <Header />
             <SyncUserWithConvex />
-            {children}
+
+            {/* Main content area */}
+            <main className="min-h-screen">{children}</main>
+
+            {/* Footer */}
+            <footer className="text-center p-4 border-t text-sm text-gray-600">
+              Tixvia is made by Aryan Kanojia |
+              <a
+                href="https://aryankanojia.live" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline ml-1"
+              >
+                Portfolio
+              </a>
+            </footer>
 
             <Toaster />
           </ClerkProvider>
