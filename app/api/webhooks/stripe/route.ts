@@ -46,7 +46,7 @@ export async function POST(req: Request) {
         userId: metadata.userId,
         waitingListId: metadata.waitingListId,
         paymentInfo: {
-          paymentIntentId: session.payment_intent as string,
+          paymentIntentId: session.payment_intent ? String(session.payment_intent) : "",
           amount: session.amount_total ?? 0,
         },
       });
