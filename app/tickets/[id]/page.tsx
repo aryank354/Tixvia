@@ -118,8 +118,8 @@ export default function TicketPage() {
             }`}
           >
             {ticket.event.is_cancelled
-              ? "For questions about refunds or cancellations, please contact our support team at team@papareact-tickr.com"
-              : "If you have any issues with your ticket, please contact our support team at team@papareact-tickr.com"}
+              ? "For questions about refunds or cancellations, please contact our developer at aryankanojia354@gmail.com"
+              : "If you have any issues with your ticket, please contact our developer at aryankanojia354@gmail.com"}
           </p>
         </div>
       </div>
