@@ -193,8 +193,7 @@ export const purchaseTicket = mutation({
     userId: v.string(),
     waitingListId: v.id("waitingList"),
     paymentInfo: v.object({
-      paymentIntentId: v.string(),
-      amount: v.number(),
+    paymentIntentId: v.optional(v.string()),
     }),
   },
   handler: async (ctx, { eventId, userId, waitingListId, paymentInfo }) => {
